@@ -1,6 +1,6 @@
 const express = require("express");
 const instanceRouter = express.Router();
-// const Instance = require("../models/instance");
+const { InstanceModel } = require("../models/ec2instanceSchema");
 const { S3Model } = require("../models/s3Schema");
 const { KeypairModel } = require("../models/keypairSchema");
 
@@ -25,6 +25,7 @@ var s3 = new AWS.S3();
 // var elb = new AWS.ELB();
 
 instanceRouter.get("/ec2instances", function (req, res) {
+  let ec2Data = [];
   const params = {
     DryRun: false,
   };
@@ -35,7 +36,47 @@ instanceRouter.get("/ec2instances", function (req, res) {
     } else {
       console.log(data.Reservations);
       // console.log(data['Reservations'][0]);
-      res.send(data.Reservations);
+
+      for(instance of data.Reservations) {
+        let tmpIns = instance['Instances'][0];
+
+        instance_info = {
+          Region: tmpIns['Placement']['AvailabilityZone'],
+          VpcId: tmpIns['VpcId'],
+          Name: tmpIns['Tags'][0]['Value'],
+          InstanceId: tmpIns['InstanceId'],
+          InstanceType: tmpIns['InstanceType'],
+          PrivateIpAddress: tmpIns['PrivateIpAddress'],
+          PrivateDnsName: tmpIns['PrivateDnsName'],
+          PublicIpAddress: tmpIns['PublicIpAddress'],
+          PublicDnsName: tmpIns['PublicDnsName'],
+          SecurityGroup: tmpIns['SecurityGroups'][0]['GroupName'],
+          InstanceState: tmpIns['State']['Name']
+        }
+
+        console.log(instance_info);
+        ec2Data.push(instance_info);
+      } // for
+
+      InstanceModel.deleteMany(function (err) {
+        if (err) {
+          return console.error(err);
+        } else {
+          console.log("Multiple documents deleted to Collection");
+
+          InstanceModel.insertMany(ec2Data, function (err, docs) {
+            if (err) {
+              return console.error(err);
+            } else {
+              console.log("Multiple documents inserted to Collection");
+            }
+          });
+        }
+      });
+
+      InstanceModel.find({}).then(function (instanceModels) {
+        res.send(instanceModels);
+      });
     }
   });
 });
