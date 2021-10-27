@@ -129,64 +129,6 @@ instanceRouter.get("/keypairs", function (req, res) {
   });
 });
 
-// Todo. document가 무엇인지에 따라 DocID에 서로 다른 data 를 넣어주어야 함.
-// 각 요소들마다 따로 method 를 만들 것인지, id를 조건을 주어 처리할 것인지
-instanceRouter.put("/userinput", function (req, res) {
-  // req 받아오기 (해당 document 전체를 받아온다고 가정)
-  let JoinDocIdInput = "test";
-  let commentInput = "Hello1";
-  let CheckDateInput = new Date();
-
-  // let existUsrInputCnt = 0;
-
-  // Todo. 실행순서 문제 해결해야함.
-
-  // cnt equals 0 insert, cnt not 0 update
-  // UserinputModel.countDocuments(
-  //   {
-  //     JoinDocId: JoinDocIdInput,
-  //   },
-  //   function (error, usrinputCnt) {
-  //     if (error) {
-  //       console.log(error);
-  //     } else {
-  //       if (usrinputCnt == 0) {
-  //         UserinputModel.insertMany([
-  //           {
-  //             JoinDocId: JoinDocIdInput,
-  //             Comment: commentInput,
-  //             CheckDate: CheckDateInput,
-  //           },
-  //         ]);
-  //       } else {
-  //         UserinputModel.updateMany();
-  //       }
-  //     }
-  //   }
-  // );
-
-  UserinputModel.findOneAndUpdate(
-    { JoinDocId: JoinDocIdInput },
-    {
-      $set: {
-        JoinDocId: JoinDocIdInput,
-        Comment: commentInput,
-        CheckDate: CheckDateInput
-      },
-    },
-    {
-      upsert: true,
-      returnDocument: true
-    }
-  ).then(function (userinputModels) {
-    console.log(userinputModels);
-  });
-
-  // UserinputModel.find({}).then(function (userinputModels) {
-  //   console.log(userinputModels);
-  // });
-});
-
 instanceRouter.get("/s3", function (req, res) {
   let bucketData = [];
   const params = {};
@@ -232,11 +174,91 @@ instanceRouter.get("/s3", function (req, res) {
       // res.send(s3Result);
     } // successful response
   });
-
-  // db.once("open", function () {
-
-  // });
 });
+
+instanceRouter.put("/userinputec2instances", function (req, res) {
+  // req 받아오기 (해당 document 전체를 받아온다고 가정)
+  let joinDocIdInput = req.body.InstanceId;
+  let commentInput = req.body.commentInput;
+  let checkDateInput = req.body.checkDateInput;
+
+  UserinputModel.findOneAndUpdate(
+    { JoinDocId: joinDocIdInput },
+    {
+      $set: {
+        JoinDocId: joinDocIdInput,
+        Comment: commentInput,
+        CheckDate: checkDateInput,
+      },
+    },
+    {
+      upsert: true,
+      returnDocument: true,
+    },
+    function(err, docs) {
+      if(err) {
+        res.send("Fail");
+      }
+      else {
+        res.send("Success");
+      }
+    }
+  );
+});
+
+instanceRouter.put("/userinputkeypairs", function (req, res) {
+  // req 받아오기 (해당 document 전체를 받아온다고 가정)
+  let joinDocIdInput = req.body.KeyPairId;
+  let commentInput = req.body.commentInput;
+  let checkDateInput = req.body.checkDateInput;
+
+  UserinputModel.findOneAndUpdate(
+    { JoinDocId: joinDocIdInput },
+    {
+      $set: {
+        JoinDocId: joinDocIdInput,
+        Comment: commentInput,
+        CheckDate: checkDateInput,
+      },
+    },
+    {
+      upsert: true,
+      returnDocument: true,
+    },
+    function(err, docs) {
+      if(err) {
+        res.send(err)
+      }
+      else {
+        res.send(docs);
+      }
+    }
+  );
+});
+
+instanceRouter.put("/userinputs3", function (req, res) {
+  // req 받아오기 (해당 document 전체를 받아온다고 가정)
+  let joinDocIdInput = req.body.Name;
+  let commentInput = req.body.commentInput;
+  let checkDateInput = req.body.checkDateInput;
+
+  UserinputModel.findOneAndUpdate(
+    { JoinDocId: joinDocIdInput },
+    {
+      $set: {
+        JoinDocId: joinDocIdInput,
+        Comment: commentInput,
+        CheckDate: checkDateInput,
+      },
+    },
+    {
+      upsert: true,
+      returnDocument: true,
+    }
+  );
+});
+
+// 여기까지 보기로 함.
 
 instanceRouter.get("/routetables", function (req, res) {
   console.log("routetables");
