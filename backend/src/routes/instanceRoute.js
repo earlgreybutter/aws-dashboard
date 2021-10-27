@@ -3,6 +3,7 @@ const instanceRouter = express.Router();
 const { InstanceModel } = require("../models/ec2instanceSchema");
 const { S3Model } = require("../models/s3Schema");
 const { KeypairModel } = require("../models/keypairSchema");
+const { UserinputModel } = require("../models/userinputScema");
 
 // make a connection
 // mongoose.connect("mongodb://localhost:27017/awsdb");
@@ -37,22 +38,22 @@ instanceRouter.get("/ec2instances", function (req, res) {
       console.log(data.Reservations);
       // console.log(data['Reservations'][0]);
 
-      for(instance of data.Reservations) {
-        let tmpIns = instance['Instances'][0];
+      for (instance of data.Reservations) {
+        let tmpIns = instance["Instances"][0];
 
         instance_info = {
-          Region: tmpIns['Placement']['AvailabilityZone'],
-          VpcId: tmpIns['VpcId'],
-          Name: tmpIns['Tags'][0]['Value'],
-          InstanceId: tmpIns['InstanceId'],
-          InstanceType: tmpIns['InstanceType'],
-          PrivateIpAddress: tmpIns['PrivateIpAddress'],
-          PrivateDnsName: tmpIns['PrivateDnsName'],
-          PublicIpAddress: tmpIns['PublicIpAddress'],
-          PublicDnsName: tmpIns['PublicDnsName'],
-          SecurityGroup: tmpIns['SecurityGroups'][0]['GroupName'],
-          InstanceState: tmpIns['State']['Name']
-        }
+          Region: tmpIns["Placement"]["AvailabilityZone"],
+          VpcId: tmpIns["VpcId"],
+          Name: tmpIns["Tags"][0]["Value"],
+          InstanceId: tmpIns["InstanceId"],
+          InstanceType: tmpIns["InstanceType"],
+          PrivateIpAddress: tmpIns["PrivateIpAddress"],
+          PrivateDnsName: tmpIns["PrivateDnsName"],
+          PublicIpAddress: tmpIns["PublicIpAddress"],
+          PublicDnsName: tmpIns["PublicDnsName"],
+          SecurityGroup: tmpIns["SecurityGroups"][0]["GroupName"],
+          InstanceState: tmpIns["State"]["Name"],
+        };
 
         console.log(instance_info);
         ec2Data.push(instance_info);
@@ -126,6 +127,64 @@ instanceRouter.get("/keypairs", function (req, res) {
       // res.send(data);
     } // successful response
   });
+});
+
+// Todo. document가 무엇인지에 따라 DocID에 서로 다른 data 를 넣어주어야 함.
+// 각 요소들마다 따로 method 를 만들 것인지, id를 조건을 주어 처리할 것인지
+instanceRouter.put("/userinput", function (req, res) {
+  // req 받아오기 (해당 document 전체를 받아온다고 가정)
+  let JoinDocIdInput = "test";
+  let commentInput = "Hello1";
+  let CheckDateInput = new Date();
+
+  // let existUsrInputCnt = 0;
+
+  // Todo. 실행순서 문제 해결해야함.
+
+  // cnt equals 0 insert, cnt not 0 update
+  // UserinputModel.countDocuments(
+  //   {
+  //     JoinDocId: JoinDocIdInput,
+  //   },
+  //   function (error, usrinputCnt) {
+  //     if (error) {
+  //       console.log(error);
+  //     } else {
+  //       if (usrinputCnt == 0) {
+  //         UserinputModel.insertMany([
+  //           {
+  //             JoinDocId: JoinDocIdInput,
+  //             Comment: commentInput,
+  //             CheckDate: CheckDateInput,
+  //           },
+  //         ]);
+  //       } else {
+  //         UserinputModel.updateMany();
+  //       }
+  //     }
+  //   }
+  // );
+
+  UserinputModel.findOneAndUpdate(
+    { JoinDocId: JoinDocIdInput },
+    {
+      $set: {
+        JoinDocId: JoinDocIdInput,
+        Comment: commentInput,
+        CheckDate: CheckDateInput
+      },
+    },
+    {
+      upsert: true,
+      returnDocument: true
+    }
+  ).then(function (userinputModels) {
+    console.log(userinputModels);
+  });
+
+  // UserinputModel.find({}).then(function (userinputModels) {
+  //   console.log(userinputModels);
+  // });
 });
 
 instanceRouter.get("/s3", function (req, res) {

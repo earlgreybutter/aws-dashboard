@@ -1,4 +1,4 @@
- const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // create instance Schema & model
@@ -9,8 +9,8 @@ var InstanceSchema = new Schema(
     Name: String,
     InstanceId: {
       type: String,
-      required: [true, 'InstanceId field is required'],
-    },
+      required: [true, "InstanceId field is required"],
+    }, // pk 비슷한 것
     InstanceType: String,
     PrivateIpAddress: String,
     PrivateDnsName: String,
@@ -18,11 +18,14 @@ var InstanceSchema = new Schema(
     PublicDnsName: String,
     SecurityGroup: String,
     InstanceState: String,
-    Comment: String,
-    CheckDate: Date
+    DocState: String, // Y/N 상태값 표시. default 값 Y로 두기, old data는 N으로 바꿔주는 logic 필요
   },
   { timestamps: true }
 );
 
-var InstanceModel = mongoose.model('Instance', InstanceSchema, "instanceCollection");  // collection name
+var InstanceModel = mongoose.model(
+  "Instance",
+  InstanceSchema,
+  "instanceCollection"
+); // collection name
 module.exports = { InstanceModel };
