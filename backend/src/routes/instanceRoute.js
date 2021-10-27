@@ -1,9 +1,9 @@
-const express = require("express");
+const express = require('express');
 const instanceRouter = express.Router();
-const { InstanceModel } = require("../models/ec2instanceSchema");
-const { S3Model } = require("../models/s3Schema");
-const { KeypairModel } = require("../models/keypairSchema");
-const { UserinputModel } = require("../models/userinputScema");
+const { InstanceModel } = require('../models/ec2instanceSchema');
+const { S3Model } = require('../models/s3Schema');
+const { KeypairModel } = require('../models/keypairSchema');
+const { UserinputModel } = require('../models/userinputScema');
 
 // make a connection
 // mongoose.connect("mongodb://localhost:27017/awsdb");
@@ -13,9 +13,9 @@ const { UserinputModel } = require("../models/userinputScema");
 
 // db.on("error", console.error.bind(console, "connection error:"));
 
-const AWS = require("aws-sdk");
+const AWS = require('aws-sdk');
 
-AWS.config.update({ region: "ap-northeast-2" });
+AWS.config.update({ region: 'ap-northeast-2' });
 // Todo. global 하게 설정하는 법
 
 const ec2 = new AWS.EC2();
@@ -25,7 +25,7 @@ var s3 = new AWS.S3();
 
 // var elb = new AWS.ELB();
 
-instanceRouter.get("/ec2instances", function (req, res) {
+instanceRouter.get('/ec2instances', function (req, res) {
   let ec2Data = [];
   const params = {
     DryRun: false,
@@ -33,26 +33,26 @@ instanceRouter.get("/ec2instances", function (req, res) {
 
   ec2.describeInstances(params, function (err, data) {
     if (err) {
-      console.log("Error", err.stack);
+      console.log('Error', err.stack);
     } else {
       console.log(data.Reservations);
       // console.log(data['Reservations'][0]);
 
       for (instance of data.Reservations) {
-        let tmpIns = instance["Instances"][0];
+        let tmpIns = instance['Instances'][0];
 
         instance_info = {
-          Region: tmpIns["Placement"]["AvailabilityZone"],
-          VpcId: tmpIns["VpcId"],
-          Name: tmpIns["Tags"][0]["Value"],
-          InstanceId: tmpIns["InstanceId"],
-          InstanceType: tmpIns["InstanceType"],
-          PrivateIpAddress: tmpIns["PrivateIpAddress"],
-          PrivateDnsName: tmpIns["PrivateDnsName"],
-          PublicIpAddress: tmpIns["PublicIpAddress"],
-          PublicDnsName: tmpIns["PublicDnsName"],
-          SecurityGroup: tmpIns["SecurityGroups"][0]["GroupName"],
-          InstanceState: tmpIns["State"]["Name"],
+          Region: tmpIns['Placement']['AvailabilityZone'],
+          VpcId: tmpIns['VpcId'],
+          Name: tmpIns['Tags'][0]['Value'],
+          InstanceId: tmpIns['InstanceId'],
+          InstanceType: tmpIns['InstanceType'],
+          PrivateIpAddress: tmpIns['PrivateIpAddress'],
+          PrivateDnsName: tmpIns['PrivateDnsName'],
+          PublicIpAddress: tmpIns['PublicIpAddress'],
+          PublicDnsName: tmpIns['PublicDnsName'],
+          SecurityGroup: tmpIns['SecurityGroups'][0]['GroupName'],
+          InstanceState: tmpIns['State']['Name'],
         };
 
         console.log(instance_info);
@@ -63,13 +63,13 @@ instanceRouter.get("/ec2instances", function (req, res) {
         if (err) {
           return console.error(err);
         } else {
-          console.log("Multiple documents deleted to Collection");
+          console.log('Multiple documents deleted to Collection');
 
           InstanceModel.insertMany(ec2Data, function (err, docs) {
             if (err) {
               return console.error(err);
             } else {
-              console.log("Multiple documents inserted to Collection");
+              console.log('Multiple documents inserted to Collection');
             }
           });
         }
@@ -82,18 +82,18 @@ instanceRouter.get("/ec2instances", function (req, res) {
   });
 });
 
-instanceRouter.get("/keypairs", function (req, res) {
+instanceRouter.get('/keypairs', function (req, res) {
   let keypairData = [];
   const params = {
     DryRun: false,
     KeyNames: [
-      "default-tika-key",
-      "Key-Hybrix-Demo",
-      "Key-IAMPAM",
-      "Key-Jitsi-Demo",
-      "key-testuser",
-      "key-wanis",
-      "MyEKSKeypair",
+      'default-tika-key',
+      'Key-Hybrix-Demo',
+      'Key-IAMPAM',
+      'Key-Jitsi-Demo',
+      'key-testuser',
+      'key-wanis',
+      'MyEKSKeypair',
     ], // Todo. KeyNames 직접 입력 안하고 가져오는 법
   };
   ec2.describeKeyPairs(params, function (err, data) {
@@ -108,13 +108,13 @@ instanceRouter.get("/keypairs", function (req, res) {
         if (err) {
           return console.error(err);
         } else {
-          console.log("Multiple documents deleted to Collection");
+          console.log('Multiple documents deleted to Collection');
 
           KeypairModel.insertMany(keypairData, function (err, docs) {
             if (err) {
               return console.error(err);
             } else {
-              console.log("Multiple documents inserted to Collection");
+              console.log('Multiple documents inserted to Collection');
             }
           });
         }
@@ -131,10 +131,10 @@ instanceRouter.get("/keypairs", function (req, res) {
 
 // Todo. document가 무엇인지에 따라 DocID에 서로 다른 data 를 넣어주어야 함.
 // 각 요소들마다 따로 method 를 만들 것인지, id를 조건을 주어 처리할 것인지
-instanceRouter.put("/userinput", function (req, res) {
+instanceRouter.put('/userinput', function (req, res) {
   // req 받아오기 (해당 document 전체를 받아온다고 가정)
-  let JoinDocIdInput = "test";
-  let commentInput = "Hello1";
+  let JoinDocIdInput = 'test';
+  let commentInput = 'Hello1';
   let CheckDateInput = new Date();
 
   // let existUsrInputCnt = 0;
@@ -171,12 +171,12 @@ instanceRouter.put("/userinput", function (req, res) {
       $set: {
         JoinDocId: JoinDocIdInput,
         Comment: commentInput,
-        CheckDate: CheckDateInput
+        CheckDate: CheckDateInput,
       },
     },
     {
       upsert: true,
-      returnDocument: true
+      returnDocument: true,
     }
   ).then(function (userinputModels) {
     console.log(userinputModels);
@@ -187,7 +187,7 @@ instanceRouter.put("/userinput", function (req, res) {
   // });
 });
 
-instanceRouter.get("/s3", function (req, res) {
+instanceRouter.get('/s3', function (req, res) {
   let bucketData = [];
   const params = {};
   s3.listBuckets(params, function (err, data) {
@@ -208,14 +208,14 @@ instanceRouter.get("/s3", function (req, res) {
         if (err) {
           return console.error(err);
         } else {
-          console.log("Multiple documents deleted to Collection");
+          console.log('Multiple documents deleted to Collection');
 
           // save mulipledocuments to the collection referenced by S3 Model
           S3Model.insertMany(bucketData, function (err, docs) {
             if (err) {
               return console.error(err);
             } else {
-              console.log("Multiple documents inserted to Collection");
+              console.log('Multiple documents inserted to Collection');
             }
           });
         }
@@ -238,15 +238,15 @@ instanceRouter.get("/s3", function (req, res) {
   // });
 });
 
-instanceRouter.get("/routetables", function (req, res) {
-  console.log("routetables");
+instanceRouter.get('/routetables', function (req, res) {
+  console.log('routetables');
 });
 
-instanceRouter.get("/rds", function (req, res) {
-  console.log("rds");
+instanceRouter.get('/rds', function (req, res) {
+  console.log('rds');
 });
 
-instanceRouter.get("/elb", function (req, res) {
+instanceRouter.get('/elb', function (req, res) {
   // const params = {
   //   LoadBalancerNames: [
   //     // 'acl-mckwon-portal',

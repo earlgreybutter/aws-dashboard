@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // create instance Schema & model
@@ -9,7 +9,7 @@ var InstanceSchema = new Schema(
     Name: String,
     InstanceId: {
       type: String,
-      required: [true, "InstanceId field is required"],
+      required: [true, 'InstanceId field is required'],
     }, // pk 비슷한 것
     InstanceType: String,
     PrivateIpAddress: String,
@@ -24,8 +24,8 @@ var InstanceSchema = new Schema(
 );
 
 var InstanceModel = mongoose.model(
-  "Instance",
+  'Instance',
   InstanceSchema,
-  "instanceCollection"
+  'instanceCollection'
 ); // collection name
 module.exports = { InstanceModel };

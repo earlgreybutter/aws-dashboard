@@ -1,16 +1,16 @@
-const { Router } = require("express");
+const { Router } = require('express');
 const keycloakRouter = Router();
-const KcAdminClient = require("keycloak-admin").default;
+const KcAdminClient = require('keycloak-admin').default;
 
 const kcAdminClient = new KcAdminClient();
 
-keycloakRouter.post("/login", async function (req, res) {
-// authorize with username / password
+keycloakRouter.post('/login', async function (req, res) {
+  // authorize with username / password
   await kcAdminClient.auth({
     username: req.body.username, // "purpleduck"
     password: req.body.password, // "purpleduck"
-    grantType: "password",
-    clientId: "admin-cli",
+    grantType: 'password',
+    clientId: 'admin-cli',
   });
 
   // console.log(req);
@@ -20,17 +20,17 @@ keycloakRouter.post("/login", async function (req, res) {
   const users = await kcAdminClient.users.find();
   console.log(users);
 
-  // response 로 뭘줄까. 
+  // response 로 뭘줄까.
   res.send(users);
 });
 
-keycloakRouter.get("/", async function () {
+keycloakRouter.get('/', async function () {
   // authorize with username / password
   await kcAdminClient.auth({
-    username: "purpleduck",
-    password: "purpleduck",
-    grantType: "password",
-    clientId: "admin-cli",
+    username: 'purpleduck',
+    password: 'purpleduck',
+    grantType: 'password',
+    clientId: 'admin-cli',
   });
 
   // List all users
@@ -40,7 +40,7 @@ keycloakRouter.get("/", async function () {
 
   // Override client connfiguration for all further requests:
   kcAdminClient.setConfig({
-    realmName: "starbucks",
+    realmName: 'starbucks',
   });
 
   // This operation will now be performed in 'starbucks' if the user has access.
@@ -59,7 +59,7 @@ keycloakRouter.get("/", async function () {
   //   });
 });
 
-keycloakRouter.get("/userlist", async function () {
+keycloakRouter.get('/userlist', async function () {
   // List all users
   const users = await kcAdminClient.users.find();
   console.log(users);
