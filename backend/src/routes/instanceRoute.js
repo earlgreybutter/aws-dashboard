@@ -1,9 +1,8 @@
 const express = require('express');
 const instanceRouter = express.Router();
-const { InstanceModel } = require('../models/ec2instanceSchema');
-const { S3Model } = require('../models/s3Schema');
-const { KeypairModel } = require('../models/keypairSchema');
-const { UserinputModel } = require('../models/userinputScema');
+const { InstanceModel } = require('../models/Ec2Instance');
+const { S3Model } = require('../models/S3');
+const { KeypairModel } = require('../models/KeyPair');
 
 // make a connection
 // mongoose.connect("mongodb://localhost:27017/awsdb");
@@ -35,7 +34,7 @@ instanceRouter.get('/ec2instances', function (req, res) {
     if (err) {
       console.log('Error', err.stack);
     } else {
-      console.log(data.Reservations);
+      // console.log(data.Reservations);
       // console.log(data['Reservations'][0]);
 
       for (instance of data.Reservations) {
@@ -54,8 +53,6 @@ instanceRouter.get('/ec2instances', function (req, res) {
           SecurityGroup: tmpIns['SecurityGroups'][0]['GroupName'],
           InstanceState: tmpIns['State']['Name'],
         };
-
-        console.log(instance_info);
         ec2Data.push(instance_info);
       } // for
 
@@ -76,7 +73,8 @@ instanceRouter.get('/ec2instances', function (req, res) {
       });
 
       InstanceModel.find({}).then(function (instanceModels) {
-        res.send(instanceModels);
+        console.log(instanceModels);
+        return res.send(instanceModels);
       });
     }
   });
@@ -182,14 +180,11 @@ instanceRouter.put('/userinputec2instances', function (req, res) {
   let commentInput = req.body.commentInput;
   let checkDateInput = req.body.checkDateInput;
 
-  UserinputModel.findOneAndUpdate(
-    { JoinDocId: joinDocIdInput },
+  InstanceModel.findOneAndUpdate(
+    { InstanceId: joinDocIdInput },
     {
-      $set: {
-        JoinDocId: joinDocIdInput,
-        Comment: commentInput,
-        CheckDate: checkDateInput,
-      },
+      'UserInput.$.Comment': commentInput,
+      'UserInput.$.CheckDate': checkDateInput,
     },
     {
       upsert: true,

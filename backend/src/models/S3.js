@@ -9,7 +9,10 @@ var s3Schema = new Schema(
       required: [true, 'Name field is required'],
     }, // pk 비슷한 것
     CreationDate: Date,
-    DocState: String, // Y/N 상태값 표시
+    UserInput: {
+      Comment: String,
+      CheckDate: Date,
+    },
   },
   {
     timestamps: true,

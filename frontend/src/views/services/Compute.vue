@@ -1,57 +1,99 @@
 <template>
-  <JqxGrid :width="'100%'" :source="dataAdapter" :columns="columns" />
+  <div style="margin-top: 20px">
+    <div style="float: left; margin-left: 10px">
+      <JqxButton @click="csvBtnOnClick()">Export to CSV</JqxButton>
+    </div>
+    <JqxGrid
+      ref="myGrid"
+      :width="'100%'"
+      :source="dataAdapter"
+      :columns="columns"
+      :autoheight="true"
+      :pageable="true"
+      :sortable="true"
+      :fillterable="true"
+      :editable="true"
+    />
+  </div>
 </template>
 
 <script>
 import JqxGrid from "jqwidgets-scripts/jqwidgets-vue/vue_jqxgrid.vue";
+import JqxInput from "jqwidgets-scripts/jqwidgets-vue/vue_jqxinput.vue";
+import JqxButton from "jqwidgets-scripts/jqwidgets-vue/vue_jqxbuttons.vue";
 
 export default {
   components: {
-    JqxGrid
+    JqxGrid,
+    JqxButton
   },
   data: function () {
     return {
       dataAdapter: new jqx.dataAdapter(this.source),
       columns: [
-        { text: "Contact Name", datafield: "ContactName", width: 240 },
-        { text: "Contact Title", datafield: "Title", width: 240 },
-        { text: "City", datafield: "City", width: 150 },
-        { text: "Country", datafield: "Country" }
+        { text: "Region", datafield: "Region", width: 240 },
+        { text: "VpcId", datafield: "VpcId", width: 240 },
+        { text: "Name", datafield: "Name", width: 150 },
+        { text: "InstanceId", datafield: "InstanceId" },
+        { text: "InstanceType", datafield: "InstanceType", width: 240 },
+        { text: "PrivateIpAddress", datafield: "PrivateIpAddress", width: 240 },
+        { text: "PrivateDnsName", datafield: "PrivateDnsName", width: 150 },
+        { text: "PublicIpAddress", datafield: "PublicIpAddress" },
+        { text: "PublicDnsName", datafield: "PublicDnsName", width: 240 },
+        { text: "SecurityGroup", datafield: "SecurityGroup", width: 240 },
+        { text: "InstanceState", datafield: "InstanceState", width: 150 },
+        {
+          text: "CheckDate",
+          datafield: "UserInput.$.CheckDate",
+          width: "20%",
+          createeditor: (row, cellvalue, editor, cellText, width, height) => {
+            let container = document.createElement("input");
+            container.className = "description";
+            container.style.border = "none";
+            editor[0].appendChild(container);
+            let options = {
+              width: width,
+              height: height,
+              displayMember: "UserInput.$.CheckDate",
+              source: this.getEditorDataAdapter("UserInput.$.CheckDate")
+            };
+          }
+        }
       ]
     };
   },
   beforeCreate: function () {
     this.source = {
-      localdata: [
-        ["Maria Anders", "Sales Representative", "Berlin", "Germany"],
-        ["Ana Trujillo", "Owner", "Mxico D.F.", "Mexico"],
-        ["Antonio Moreno", "Owner", "Mxico D.F.", "Mexico"],
-        ["Thomas Hardy", "Sales Representative", "London", "UK"],
-        ["Christina Berglund", "Order Administrator", "Lule", "Sweden"],
-        ["Hanna Moos", "Sales Representative", "Mannheim", "Germany"],
-        ["Frdrique Citeaux", "Marketing Manager", "Strasbourg", "France"],
-        ["Martn Sommer", "Owner", "Madrid", "Spain"],
-        ["Owner", "Marseille", "France"],
-        ["Elizabeth Lincoln", "Accounting Manager", "Tsawassen", "Canada"],
-        ["Victoria Ashworth", "Sales Representative", "London", "UK"],
-        ["Patricio Simpson", "Sales Agent", "Buenos Aires", "Argentina"],
-        ["Francisco Chang", "Marketing Manager", "Mxico D.F.", "Mexico"],
-        ["Yang Wang", "Owner", "Bern", "Switzerland"],
-        ["Pedro Afonso", "Sales Associate", "Sao Paulo", "Brazil"],
-        ["Elizabeth Brown", "Sales Representative", "London", "UK"],
-        ["Sven Ottlieb", "Order Administrator", "Aachen", "Germany"],
-        ["Janine Labrune", "Owner", "Nantes", "France"],
-        ["Ann Devon", "Sales Agent", "London", "UK"],
-        ["Roland Mendel", "Sales Manager", "Graz", "Austria"]
-      ],
+      id: "_id",
+      url: "http://localhost:5000/data/ec2instances",
+      datatype: "json",
       datafields: [
-        { name: "ContactName", type: "string", map: "0" },
-        { name: "Title", type: "string", map: "1" },
-        { name: "City", type: "string", map: "2" },
-        { name: "Country", type: "string", map: "3" }
-      ],
-      datatype: "array"
+        { name: "Region", type: "string" },
+        { name: "VpcId", type: "string" },
+        { name: "Name", type: "string" },
+        { name: "InstanceId", type: "string" },
+        { name: "InstanceType", type: "string" },
+        { name: "PrivateIpAddress", type: "string" },
+        { name: "PrivateDnsName", type: "string" },
+        { name: "PublicIpAddress", type: "string" },
+        { name: "PublicDnsName", type: "string" },
+        { name: "SecurityGroup", type: "string" },
+        { name: "InstanceState", type: "string" },
+        { name: "UserInput.$.Comment", type: "string", map: "11" },
+        { name: "UserInput.$.CheckDate", type: "string", map: "12" }
+      ]
     };
+  },
+  methods: {
+    getEditorDataAdapter: function (datafield) {
+      let dataAdapter = new jqx.dataAdapter(this.source, {
+        uniqueDataFields: [datafield]
+      });
+      return dataAdapter;
+    },
+    csvBtnOnClick: function () {
+      this.$refs.myGrid.exportdata("csv", "ec2instances" + new Date());
+    }
   }
 };
 </script>

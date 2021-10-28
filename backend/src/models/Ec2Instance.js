@@ -18,7 +18,10 @@ var InstanceSchema = new Schema(
     PublicDnsName: String,
     SecurityGroup: String,
     InstanceState: String,
-    DocState: String, // Y/N 상태값 표시. default 값 Y로 두기, old data는 N으로 바꿔주는 logic 필요
+    UserInput: {
+      Comment: String,
+      CheckDate: Date,
+    },
   },
   { timestamps: true }
 );

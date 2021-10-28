@@ -12,7 +12,10 @@ var keypairSchema = new Schema(
     KeyName: String,
     KeyType: String,
     Tags: Array,
-    DocState: String, // Y/N 상태값 표시
+    UserInput: {
+      Comment: String,
+      CheckDate: Date,
+    },
   },
   {
     timestamps: true,
