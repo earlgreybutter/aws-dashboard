@@ -4,7 +4,7 @@
       <JqxButton @click="csvBtnOnClick()">Export to CSV</JqxButton>
     </div>
     <JqxGrid
-      ref="myGrid"
+      ref="ec2grid"
       :width="'100%'"
       :source="dataAdapter"
       :columns="columns"
@@ -92,7 +92,7 @@ export default {
       return dataAdapter;
     },
     csvBtnOnClick: function () {
-      this.$refs.myGrid.exportdata("csv", "ec2instances" + new Date());
+      this.$refs.ec2grid.exportdata("csv", "ec2instances" + new Date());
     }
   }
 };
