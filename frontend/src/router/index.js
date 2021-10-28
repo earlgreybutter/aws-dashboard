@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-import Dashboard from "../views/Dashboard.vue";
+import DashboardLayout from "../views/DashboardLayout.vue";
 
 import Compute from "../views/services/Compute.vue";
 import Database from "../views/services/Database.vue";
@@ -17,65 +17,84 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    redirect: "/services"
+    redirect: "/services",
   },
   {
     path: "/services",
     name: "Services",
-    component: Dashboard,
-    props: true,
+    redirect: "/services/compute",
+    component: DashboardLayout,
     children: [
       {
         path: "compute",
         name: "Compute",
-        component: Compute
+        component: Compute,
       },
       {
         path: "db",
         name: "DB",
-        component: Database
+        component: Database,
       },
       {
-        path: "network",
+        path: "networkd",
         name: "Network",
-        component: Network
+        component: Network,
       },
       {
         path: "storage",
         name: "Storage",
-        component: Storage
+        component: Storage,
       },
       {
         path: "access-key",
         name: "Access Key",
-        component: AccessKey
-      }
-    ]
+        component: AccessKey,
+      },
+    ],
   },
   {
     path: "/policies",
     name: "Policies",
-    component: Dashboard,
-    props: true,
+    component: DashboardLayout,
     children: [
       {
         path: "nacl",
         name: "Network ACL",
-        component: NetworkAcl
+        component: NetworkAcl,
       },
       {
         path: "sg",
         name: "Security Group",
-        component: SecurityGroup
-      }
-    ]
-  }
+        component: SecurityGroup,
+      },
+    ],
+  },
+  {
+    path: "/event",
+    name: "Event",
+    component: DashboardLayout,
+  },
+  {
+    path: "/compliances",
+    name: "Compliances",
+    component: DashboardLayout,
+  },
+  {
+    path: "/iam",
+    name: "Iam",
+    component: DashboardLayout,
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: DashboardLayout,
+  },
 ];
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes,
 });
 
 export default router;

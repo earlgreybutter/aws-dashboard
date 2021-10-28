@@ -5,11 +5,18 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
-    isNav: false
-  },
-  mutations: {
-    changeTitle(state) {
-      state.isNav = !state.isNav;
+    menus: {
+      services: [
+        { name: "Compute", id: 1 },
+        { name: "DB", id: 2 },
+        { name: "Network", id: 3 },
+        { name: "Storage", id: 4 },
+        { name: "Access Key", id: 5 }
+      ],
+      policies: [
+        { name: "Network ACL", id: 1 },
+        { name: "Security Group", id: 2 }
+      ]
     }
   }
 });
