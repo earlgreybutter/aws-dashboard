@@ -3,9 +3,9 @@
     <div id="nav">
       <router-link :to="{ name: 'Services' }" @click.native="chageSubMenus('services')">Services</router-link> |
       <router-link :to="{ name: 'Network ACL' }" @click.native="chageSubMenus('policies')">Policies</router-link> |
-      <router-link :to="{ name: 'Event' }" @click.native="chageSubMenus('services')">Event</router-link> |
-      <router-link :to="{ name: 'Compliances' }" @click.native="chageSubMenus('services')">Compliances</router-link> |
-      <router-link :to="{ name: 'Iam' }" @click.native="chageSubMenus('services')">IAM</router-link> |
+      <router-link :to="{ name: 'Event' }" @click.native="chageSubMenus('event')">Event</router-link> |
+      <router-link :to="{ name: 'Compliances' }" @click.native="chageSubMenus('compliances')">Compliances</router-link> |
+      <router-link :to="{ name: 'Iam' }" @click.native="chageSubMenus('iam')">IAM</router-link> |
       <router-link :to="{ name: 'Admin' }" @click.native="chageSubMenus('services')">Admin</router-link>
     </div>
 
@@ -28,6 +28,7 @@
 export default {
   data() {
     return {
+      selectedMenu: "",
       menus: {
         services: [
           { name: "Compute", id: 1 },
@@ -40,8 +41,27 @@ export default {
           { name: "Network ACL", id: 1 },
           { name: "Security Group", id: 2 },
         ],
+        event: [
+          { name: "IAM Console Access", id: 1 },
+          { name: "EC2 Events", id: 2 },
+          { name: "RDS Events", id: 3 },
+          { name: "S3 Events", id: 4 },
+          { name: "AccessKey Events", id: 5 },
+        ],
+        compliances: [
+          { name: "Credential Report", id: 1 },
+          { name: "Check Root Privilege", id: 2 },
+          { name: "Check Account", id: 3 },
+          { name: "Check Authentication", id: 4 },
+          { name: "Check Access Key", id: 5 },
+        ],
+        iam: [
+          { name: "IAM Users", id: 1 },
+          { name: "IAM Grouops", id: 2 },
+          { name: "IAM Roles", id: 3 },
+          { name: "IAM Policies", id: 4 },
+        ],
       },
-      selectedMenu: "",
     };
   },
   methods: {
