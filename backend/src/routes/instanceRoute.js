@@ -73,7 +73,7 @@ instanceRouter.get('/ec2instances', function (req, res) {
       // });
 
       InstanceModel.find({}).then(function (instanceModels) {
-        console.log(instanceModels);
+        // console.log(instanceModels);
         return res.send(instanceModels);
       });
     }
