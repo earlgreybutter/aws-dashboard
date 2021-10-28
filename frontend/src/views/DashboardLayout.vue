@@ -6,7 +6,7 @@
       <router-link :to="{ name: 'Event' }" @click.native="chageSubMenus('event')">Event</router-link> |
       <router-link :to="{ name: 'Compliances' }" @click.native="chageSubMenus('compliances')">Compliances</router-link> |
       <router-link :to="{ name: 'Iam' }" @click.native="chageSubMenus('iam')">IAM</router-link> |
-      <router-link :to="{ name: 'Admin' }" @click.native="chageSubMenus('services')">Admin</router-link>
+      <router-link :to="{ name: 'Admin' }">Admin</router-link>
     </div>
 
     <div class="container">

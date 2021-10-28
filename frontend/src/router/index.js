@@ -3,14 +3,19 @@ import VueRouter from "vue-router";
 
 import DashboardLayout from "../views/DashboardLayout.vue";
 
+// Services
 import Compute from "../views/services/Compute.vue";
 import Database from "../views/services/Database.vue";
 import Network from "../views/services/Network.vue";
 import Storage from "../views/services/Storage.vue";
 import AccessKey from "../views/services/AccessKey.vue";
 
+// Policies
 import NetworkAcl from "../views/policies/NetworkAcl.vue";
 import SecurityGroup from "../views/policies/SecurityGroup.vue";
+
+// Admin
+import AdminPage from "../views/AdminPage.vue";
 
 Vue.use(VueRouter);
 
@@ -87,7 +92,7 @@ const routes = [
   {
     path: "/admin",
     name: "Admin",
-    component: DashboardLayout,
+    component: AdminPage,
   },
 ];
 
