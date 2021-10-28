@@ -73,7 +73,7 @@ instanceRouter.get('/ec2instances', function (req, res) {
       });
 
       InstanceModel.find({}).then(function (instanceModels) {
-        console.log(instanceModels);
+        // console.log(instanceModels);
         return res.send(instanceModels);
       });
     }
@@ -99,7 +99,7 @@ instanceRouter.get('/keypairs', function (req, res) {
       console.log(err, err.stack);
     } // an error occurred
     else {
-      console.log(data.KeyPairs);
+      // console.log(data.KeyPairs);
       keypairData = data.KeyPairs;
 
       KeypairModel.deleteMany(function (err) {
