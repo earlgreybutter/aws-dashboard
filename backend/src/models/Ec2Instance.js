@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const InputColumn = require('./InputColumn');
 
 // create instance Schema & model
 var InstanceSchema = new Schema(
@@ -18,10 +19,7 @@ var InstanceSchema = new Schema(
     PublicDnsName: String,
     SecurityGroup: String,
     InstanceState: String,
-    UserInput: {
-      Comment: String,
-      CheckDate: Date,
-    },
+    InputValue: InputColumn,
   },
   { timestamps: true }
 );

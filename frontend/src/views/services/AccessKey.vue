@@ -14,6 +14,8 @@
       :sortable="true"
       :fillterable="true"
       :editable="true"
+      @cellbeginedit="onCellBeginEdit($event)"
+      @cellendedit="onCellEndEdit($event)"
     />
   </div>
 </template>
@@ -32,23 +34,48 @@ export default {
     return {
       dataAdapter: new jqx.dataAdapter(this.source),
       columns: [
-        { text: "KeyName", datafield: "KeyName", width: 240 },
-        { text: "KeyFingerprint", datafield: "KeyFingerprint", width: 240 },
+        { text: "KeyName", datafield: "KeyName", editable: false, width: 240 },
+        {
+          text: "KeyFingerprint",
+          datafield: "KeyFingerprint",
+          editable: false,
+          width: 240
+        },
+        {
+          text: "Comment",
+          datafield: "InputValue.Comment",
+          columntype: "textbox",
+          editable: true,
+          width: "20%"
+        },
         {
           text: "CheckDate",
-          datafield: "UserInput.$.CheckDate",
-          width: "20%",
-          createeditor: (row, cellvalue, editor, cellText, width, height) => {
-            let container = document.createElement("input");
-            container.className = "description";
-            container.style.border = "none";
-            editor[0].appendChild(container);
-            let options = {
-              width: width,
-              height: height,
-              displayMember: "UserInput.$.CheckDate",
-              source: this.getEditorDataAdapter("UserInput.$.CheckDate")
-            };
+          datafield: "InputValue.CheckDate",
+          columntype: "datetimeinput",
+          editable: true,
+          width: "20%"
+        },
+        {
+          text: "Submit",
+          datafield: "Save",
+          columntype: "button",
+          cellsrenderer: function () {
+            return "Save";
+          },
+          buttonclick: function (row, event) {
+            var button = $(event.currentTarget);
+            var grid = button.parents("[id^=jqxGrid]");
+            var rowData = grid.jqxGrid("getrowdata", row);
+
+            console.log(rowData);
+
+            fetch("http://localhost:5000/data/userinputkeypairs", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(rowData)
+            })
+              .then((response) => response.json())
+              .then((data) => console.log(data));
           }
         }
       ]
@@ -61,18 +88,26 @@ export default {
       datatype: "json",
       datafields: [
         { name: "KeyName", type: "string" },
+        { name: "KeyPairId", type: "string"},
         { name: "KeyFingerprint", type: "string" },
-        { name: "UserInput.$.Comment", type: "string" },
-        { name: "UserInput.$.CheckDate", type: "string" }
+        { name: "InputValue.Comment", type: "string" },
+        { name: "InputValue.CheckDate", type: "string" }
       ]
     };
   },
   methods: {
-    getEditorDataAdapter: function (datafield) {
-      let dataAdapter = new jqx.dataAdapter(this.source, {
-        uniqueDataFields: [datafield]
-      });
-      return dataAdapter;
+    onCellBeginEdit: function (event) {
+      let args = event.args;
+      let columnDataField = args.datafield;
+      let rowIndex = args.rowindex;
+      let cellValue = args.value;
+    },
+    onCellEndEdit: function (event) {
+      let args = event.args;
+      let columnDataField = args.datafield;
+      let rowIndex = args.rowindex;
+      let cellValue = args.value;
+      let oldValue = args.oldvalue;
     },
     csvBtnOnClick: function () {
       this.$refs.keypairgrid.exportdata("csv", "EC2_Access_Key" + new Date());

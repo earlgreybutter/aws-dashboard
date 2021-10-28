@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const InputColumn = require('./InputColumn');
 
 // define Schema
 var s3Schema = new Schema(
@@ -9,10 +10,7 @@ var s3Schema = new Schema(
       required: [true, 'Name field is required'],
     }, // pk 비슷한 것
     CreationDate: Date,
-    UserInput: {
-      Comment: String,
-      CheckDate: Date,
-    },
+    InputValue: InputColumn,
   },
   {
     timestamps: true,

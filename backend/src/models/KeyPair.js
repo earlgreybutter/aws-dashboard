@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const InputColumn = require('./InputColumn');
 
 // define Schema
 var keypairSchema = new Schema(
@@ -12,10 +13,7 @@ var keypairSchema = new Schema(
     KeyName: String,
     KeyType: String,
     Tags: Array,
-    UserInput: {
-      Comment: String,
-      CheckDate: Date,
-    },
+    InputValue: InputColumn,
   },
   {
     timestamps: true,

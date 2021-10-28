@@ -56,21 +56,21 @@ instanceRouter.get('/ec2instances', function (req, res) {
         ec2Data.push(instance_info);
       } // for
 
-      InstanceModel.deleteMany(function (err) {
-        if (err) {
-          return console.error(err);
-        } else {
-          console.log('Multiple documents deleted to Collection');
+      // InstanceModel.deleteMany(function (err) {
+      //   if (err) {
+      //     return console.error(err);
+      //   } else {
+      //     console.log('Multiple documents deleted to Collection');
 
-          InstanceModel.insertMany(ec2Data, function (err, docs) {
-            if (err) {
-              return console.error(err);
-            } else {
-              console.log('Multiple documents inserted to Collection');
-            }
-          });
-        }
-      });
+      //     InstanceModel.insertMany(ec2Data, function (err, docs) {
+      //       if (err) {
+      //         return console.error(err);
+      //       } else {
+      //         console.log('Multiple documents inserted to Collection');
+      //       }
+      //     });
+      //   }
+      // });
 
       InstanceModel.find({}).then(function (instanceModels) {
         console.log(instanceModels);
@@ -99,24 +99,24 @@ instanceRouter.get('/keypairs', function (req, res) {
       console.log(err, err.stack);
     } // an error occurred
     else {
-      console.log(data.KeyPairs);
+      // console.log(data.KeyPairs);
       keypairData = data.KeyPairs;
 
-      KeypairModel.deleteMany(function (err) {
-        if (err) {
-          return console.error(err);
-        } else {
-          console.log('Multiple documents deleted to Collection');
+      // KeypairModel.deleteMany(function (err) {
+      //   if (err) {
+      //     return console.error(err);
+      //   } else {
+      //     console.log('Multiple documents deleted to Collection');
 
-          KeypairModel.insertMany(keypairData, function (err, docs) {
-            if (err) {
-              return console.error(err);
-            } else {
-              console.log('Multiple documents inserted to Collection');
-            }
-          });
-        }
-      });
+      //     KeypairModel.insertMany(keypairData, function (err, docs) {
+      //       if (err) {
+      //         return console.error(err);
+      //       } else {
+      //         console.log('Multiple documents inserted to Collection');
+      //       }
+      //     });
+      //   }
+      // });
 
       KeypairModel.find({}).then(function (keypairModels) {
         res.send(keypairModels);
@@ -143,22 +143,22 @@ instanceRouter.get('/s3', function (req, res) {
       // documents array
       // bucketData
 
-      S3Model.deleteMany(function (err) {
-        if (err) {
-          return console.error(err);
-        } else {
-          console.log('Multiple documents deleted to Collection');
+      // S3Model.deleteMany(function (err) {
+      //   if (err) {
+      //     return console.error(err);
+      //   } else {
+      //     console.log('Multiple documents deleted to Collection');
 
-          // save mulipledocuments to the collection referenced by S3 Model
-          S3Model.insertMany(bucketData, function (err, docs) {
-            if (err) {
-              return console.error(err);
-            } else {
-              console.log('Multiple documents inserted to Collection');
-            }
-          });
-        }
-      });
+      //     // save mulipledocuments to the collection referenced by S3 Model
+      //     S3Model.insertMany(bucketData, function (err, docs) {
+      //       if (err) {
+      //         return console.error(err);
+      //       } else {
+      //         console.log('Multiple documents inserted to Collection');
+      //       }
+      //     });
+      //   }
+      // });
 
       S3Model.find({}).then(function (s3Models) {
         res.send(s3Models);
@@ -175,15 +175,17 @@ instanceRouter.get('/s3', function (req, res) {
 
 instanceRouter.put('/userinputec2instances', function (req, res) {
   // req 받아오기 (해당 document 전체를 받아온다고 가정)
-  let joinDocIdInput = req.body.InstanceId;
-  let commentInput = req.body.commentInput;
-  let checkDateInput = req.body.checkDateInput;
+  // let joinDocIdInput = req.body.InstanceId;
+  // let commentInput = req.body.commentInput;
+  // let checkDateInput = req.body.checkDateInput;
+
+  let { joinDocIdInput, commentInput, checkDateInput } = req.body;
 
   InstanceModel.findOneAndUpdate(
     { InstanceId: joinDocIdInput },
     {
-      'UserInput.$.Comment': commentInput,
-      'UserInput.$.CheckDate': checkDateInput,
+      'InputValue.Comment': commentInput,
+      'UserInput.CheckDate': checkDateInput,
     },
     {
       upsert: true,
@@ -202,19 +204,22 @@ instanceRouter.put('/userinputec2instances', function (req, res) {
 instanceRouter.put('/userinputkeypairs', function (req, res) {
   // req 받아오기 (해당 document 전체를 받아온다고 가정)
   let joinDocIdInput = req.body.KeyPairId;
-  let commentInput = req.body.commentInput;
+  console.log(joinDocIdInput);
+  let commentInput = req.body.InputValue.commentInput;
   let checkDateInput = req.body.checkDateInput;
 
-  UserinputModel.findOneAndUpdate(
-    { JoinDocId: joinDocIdInput },
+  // const { comment, checkDate } = req.body;
+  //const comment = req.body.comment;
+  // console.log(comment);
+
+  KeypairModel.findOneAndUpdate(
+    { KeyPairId: joinDocIdInput },
     {
-      $set: {
-        JoinDocId: joinDocIdInput,
-        Comment: commentInput,
-        CheckDate: checkDateInput,
-      },
+      'InputValue.Comment': comment,
+      // 'InputValue.CheckDate': checkDate,
     },
     {
+      new: true, 
       upsert: true,
       returnDocument: true,
     },
@@ -222,6 +227,7 @@ instanceRouter.put('/userinputkeypairs', function (req, res) {
       if (err) {
         res.send(err);
       } else {
+        console.log('123');
         res.send(docs);
       }
     }
@@ -230,18 +236,17 @@ instanceRouter.put('/userinputkeypairs', function (req, res) {
 
 instanceRouter.put('/userinputs3', function (req, res) {
   // req 받아오기 (해당 document 전체를 받아온다고 가정)
-  let joinDocIdInput = req.body.Name;
-  let commentInput = req.body.commentInput;
-  let checkDateInput = req.body.checkDateInput;
+  // let joinDocIdInput = req.body.Name;
+  // let commentInput = req.body.commentInput;
+  // let checkDateInput = req.body.checkDateInput;
 
-  UserinputModel.findOneAndUpdate(
+  const { joinDocIdInput, commentInput, checkDateInput } = req.body;
+
+  S3Model.findOneAndUpdate(
     { JoinDocId: joinDocIdInput },
     {
-      $set: {
-        JoinDocId: joinDocIdInput,
-        Comment: commentInput,
-        CheckDate: checkDateInput,
-      },
+      'InputValue.Comment': commentInput,
+      'InputValue.CheckDate': checkDateInput,
     },
     {
       upsert: true,
