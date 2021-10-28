@@ -135,7 +135,6 @@ instanceRouter.get('/s3', function (req, res) {
       console.log(err, err.stack);
     } // an error occurred
     else {
-      console.log(data.Buckets);
       bucketData = data.Buckets;
       // res.send(data);
 

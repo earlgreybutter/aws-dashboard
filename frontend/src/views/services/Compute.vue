@@ -1,5 +1,6 @@
 <template>
   <div style="margin-top: 20px">
+    <h1>Compute</h1>
     <div style="float: left; margin-left: 10px">
       <JqxButton @click="csvBtnOnClick()">Export to CSV</JqxButton>
     </div>
