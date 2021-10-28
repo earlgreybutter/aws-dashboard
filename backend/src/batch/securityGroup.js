@@ -1,4 +1,5 @@
 'use strict';
+
 const AWS = require('aws-sdk');
 const mongoose = require('mongoose');
 const { SecurityGroup } = require('../models/SecurityGroup');
@@ -11,16 +12,16 @@ AWS.config.apiVersions = { ec2: '2016-11-15' };
 
 const ec2 = new AWS.EC2();
 
-ec2.describeSecurityGroups(function (err, data) {
+ec2.describeSecurityGroups(async function (err, data) {
   if (err) console.log(err, err.stack);
   else {
-    SecurityGroup.insertMany(data)
-      .then(data => {
-        console.log(data);
-        mongoose.disconnect();
+    await SecurityGroup.insertMany(data['SecurityGroups'])
+      .then(result => {
+        console.log(result);
       })
       .catch(err => {
         console.log(err);
       });
   }
+  mongoose.disconnect();
 });
