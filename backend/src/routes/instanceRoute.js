@@ -174,20 +174,19 @@ instanceRouter.get('/s3', function (req, res) {
 });
 
 instanceRouter.put('/userinputec2instances', function (req, res) {
-  // req 받아오기 (해당 document 전체를 받아온다고 가정)
-  // let joinDocIdInput = req.body.InstanceId;
-  // let commentInput = req.body.commentInput;
-  // let checkDateInput = req.body.checkDateInput;
-
-  let { joinDocIdInput, commentInput, checkDateInput } = req.body;
+  console.log(req.body);
+  let joinDocIdInput = req.body.InstanceId;
+  let commentInput = req.body['InputValue.Comment'];
+  let checkDateInput = req.body['InputValue.CheckDate'];
 
   InstanceModel.findOneAndUpdate(
     { InstanceId: joinDocIdInput },
     {
       'InputValue.Comment': commentInput,
-      'UserInput.CheckDate': checkDateInput,
+      'InputValue.CheckDate': checkDateInput,
     },
     {
+      new: true,
       upsert: true,
       returnDocument: true,
     },
@@ -202,24 +201,18 @@ instanceRouter.put('/userinputec2instances', function (req, res) {
 });
 
 instanceRouter.put('/userinputkeypairs', function (req, res) {
-  // req 받아오기 (해당 document 전체를 받아온다고 가정)
   let joinDocIdInput = req.body.KeyPairId;
-  console.log(joinDocIdInput);
-  let commentInput = req.body.InputValue.commentInput;
-  let checkDateInput = req.body.checkDateInput;
-
-  // const { comment, checkDate } = req.body;
-  //const comment = req.body.comment;
-  // console.log(comment);
+  let commentInput = req.body['InputValue.Comment'];
+  let checkDateInput = req.body['InputValue.CheckDate'];
 
   KeypairModel.findOneAndUpdate(
     { KeyPairId: joinDocIdInput },
     {
-      'InputValue.Comment': comment,
-      // 'InputValue.CheckDate': checkDate,
+      'InputValue.Comment': commentInput,
+      'InputValue.CheckDate': checkDateInput,
     },
     {
-      new: true, 
+      new: true,
       upsert: true,
       returnDocument: true,
     },
@@ -227,7 +220,6 @@ instanceRouter.put('/userinputkeypairs', function (req, res) {
       if (err) {
         res.send(err);
       } else {
-        console.log('123');
         res.send(docs);
       }
     }
@@ -235,22 +227,29 @@ instanceRouter.put('/userinputkeypairs', function (req, res) {
 });
 
 instanceRouter.put('/userinputs3', function (req, res) {
+  console.log(req.body);
   // req 받아오기 (해당 document 전체를 받아온다고 가정)
-  // let joinDocIdInput = req.body.Name;
-  // let commentInput = req.body.commentInput;
-  // let checkDateInput = req.body.checkDateInput;
-
-  const { joinDocIdInput, commentInput, checkDateInput } = req.body;
+  let joinDocIdInput = req.body.Name;
+  let commentInput = req.body['InputValue.Comment'];
+  let checkDateInput = req.body['InputValue.CheckDate'];
 
   S3Model.findOneAndUpdate(
-    { JoinDocId: joinDocIdInput },
+    { Name: joinDocIdInput },
     {
       'InputValue.Comment': commentInput,
       'InputValue.CheckDate': checkDateInput,
     },
     {
+      new: true,
       upsert: true,
       returnDocument: true,
+    },
+    function (err, docs) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(docs);
+      }
     }
   );
 });
