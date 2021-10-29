@@ -43,14 +43,14 @@ export default {
         },
         {
           text: "Comment",
-          datafield: "InputValue.Comment",
+          datafield: 'InputValue.Comment',
           columntype: "textbox",
           editable: true,
           width: "20%"
         },
         {
           text: "CheckDate",
-          datafield: "InputValue.CheckDate",
+          datafield: ['InputValue.CheckDate'],
           columntype: "datetimeinput",
           editable: true,
           width: "20%"
@@ -66,8 +66,6 @@ export default {
             var button = $(event.currentTarget);
             var grid = button.parents("[id^=jqxGrid]");
             var rowData = grid.jqxGrid("getrowdata", row);
-
-            console.log(rowData);
 
             fetch("http://localhost:5000/data/userinputkeypairs", {
               method: "PUT",
@@ -90,8 +88,8 @@ export default {
         { name: "KeyName", type: "string" },
         { name: "KeyPairId", type: "string"},
         { name: "KeyFingerprint", type: "string" },
-        { name: "InputValue.Comment", type: "string" },
-        { name: "InputValue.CheckDate", type: "string" }
+        { name: 'InputValue.Comment', type: "string" },
+        { name: ['InputValue.CheckDate'], type: "string" }
       ]
     };
   },

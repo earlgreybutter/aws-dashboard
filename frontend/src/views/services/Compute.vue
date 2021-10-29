@@ -32,32 +32,50 @@ export default {
     return {
       dataAdapter: new jqx.dataAdapter(this.source),
       columns: [
-        { text: "Region", datafield: "Region", width: 240 },
-        { text: "VpcId", datafield: "VpcId", width: 240 },
-        { text: "Name", datafield: "Name", width: 150 },
-        { text: "InstanceId", datafield: "InstanceId" },
-        { text: "InstanceType", datafield: "InstanceType", width: 240 },
-        { text: "PrivateIpAddress", datafield: "PrivateIpAddress", width: 240 },
-        { text: "PrivateDnsName", datafield: "PrivateDnsName", width: 150 },
-        { text: "PublicIpAddress", datafield: "PublicIpAddress" },
-        { text: "PublicDnsName", datafield: "PublicDnsName", width: 240 },
-        { text: "SecurityGroup", datafield: "SecurityGroup", width: 240 },
-        { text: "InstanceState", datafield: "InstanceState", width: 150 },
+        { text: "Region", datafield: "Region", editable: false, width: 240 },
+        { text: "VpcId", datafield: "VpcId", editable: false, width: 240 },
+        { text: "Name", datafield: "Name", editable: false, width: 150 },
+        { text: "InstanceId", datafield: "InstanceId", editable: false},
+        { text: "InstanceType", datafield: "InstanceType", editable: false, width: 240 },
+        { text: "PrivateIpAddress", datafield: "PrivateIpAddress", editable: false, width: 240 },
+        { text: "PrivateDnsName", datafield: "PrivateDnsName", editable: false, width: 150 },
+        { text: "PublicIpAddress", datafield: "PublicIpAddress", editable: false},
+        { text: "PublicDnsName", datafield: "PublicDnsName", editable: false, width: 240 },
+        { text: "SecurityGroup", datafield: "SecurityGroup", editable: false, width: 240 },
+        { text: "InstanceState", datafield: "InstanceState", editable: false, width: 150 },
+        {
+          text: "Comment",
+          datafield: 'InputValue.Comment',
+          columntype: "textbox",
+          editable: true,
+          width: "20%"
+        },
         {
           text: "CheckDate",
-          datafield: "UserInput.$.CheckDate",
-          width: "20%",
-          createeditor: (row, cellvalue, editor, cellText, width, height) => {
-            let container = document.createElement("input");
-            container.className = "description";
-            container.style.border = "none";
-            editor[0].appendChild(container);
-            let options = {
-              width: width,
-              height: height,
-              displayMember: "UserInput.$.CheckDate",
-              source: this.getEditorDataAdapter("UserInput.$.CheckDate")
-            };
+          datafield: ['InputValue.CheckDate'],
+          columntype: "datetimeinput",
+          editable: true,
+          width: "20%"
+        },
+        {
+          text: "Submit",
+          datafield: "Save",
+          columntype: "button",
+          cellsrenderer: function () {
+            return "Save";
+          },
+          buttonclick: function (row, event) {
+            var button = $(event.currentTarget);
+            var grid = button.parents("[id^=jqxGrid]");
+            var rowData = grid.jqxGrid("getrowdata", row);
+
+            fetch("http://localhost:5000/data/userinputec2instances", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(rowData)
+            })
+              .then((response) => response.json())
+              .then((data) => console.log(data));
           }
         }
       ]
@@ -80,18 +98,12 @@ export default {
         { name: "PublicDnsName", type: "string" },
         { name: "SecurityGroup", type: "string" },
         { name: "InstanceState", type: "string" },
-        { name: "UserInput.$.Comment", type: "string", map: "11" },
-        { name: "UserInput.$.CheckDate", type: "string", map: "12" }
+        { name: "InputValue.Comment", type: "string"},
+        { name: "InputValue.CheckDate", type: "string"}
       ]
     };
   },
   methods: {
-    getEditorDataAdapter: function (datafield) {
-      let dataAdapter = new jqx.dataAdapter(this.source, {
-        uniqueDataFields: [datafield]
-      });
-      return dataAdapter;
-    },
     csvBtnOnClick: function () {
       this.$refs.ec2grid.exportdata("csv", "ec2instances" + new Date());
     }
