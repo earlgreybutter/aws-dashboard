@@ -18,7 +18,7 @@ securityGroupRouter.put('/sgs/:sgId/input-values', async (req, res) => {
     if (!mongoose.isValidObjectId(sgId)) return res.status(400).send({ err: 'invalid sgId' });
 
     const { comment, checkDate } = req.body;
-    console.log(comment, checkDate);
+    // console.log(comment, checkDate);
 
     const securityGroup = await SecurityGroup.findByIdAndUpdate(
       sgId,
