@@ -28,13 +28,36 @@
       </select>
       <button :disabled="!instanceSelected" type="submit" @click="changeIntancesInterval(instanceSelected)">Submit</button>
     </div>
+
+    <div>
+      <p>keycloak login</p>
+      <div>
+        <label>username</label>
+        <JqxInput ref="username" :width="200" :height="25" :placeHolder="'username'"> </JqxInput>
+      </div>
+      <div>
+        <label>password</label>
+        <JqxInput ref="passwordinput" :placeHolder="'Enter password'" :showStrength="true" :width="200" :height="25" @enter="submitButtonClicked()">
+        </JqxInput>
+      </div>
+      <div>
+        <button type="submit" @click="submitButtonClicked()">Submit</button>
+      </div>
+      <div ref="events"></div>
+    </div>
   </div>
 </template>
 
 <script>
+import JqxInput from "jqwidgets-scripts/jqwidgets-vue/vue_jqxinput.vue";
+import JqxButton from "jqwidgets-scripts/jqwidgets-vue/vue_jqxbuttons.vue";
 import axios from "axios";
 
 export default {
+  components: {
+    JqxInput,
+    JqxButton,
+  },
   data() {
     return {
       sgSelected: "",
@@ -67,6 +90,19 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+    },
+    submitButtonClicked: async function () {
+      let usernameAlert = this.$refs.username.value;
+      let passwordAlert = this.$refs.passwordinput.value;
+      // alert(`${usernameAlert}, ${passwordAlert}`);
+
+      // 1. request 로 username 과 password 를 넘겨준다.
+      let payload = { username: usernameAlert, password: passwordAlert };
+      let res = await axios.post("http://localhost:5000/keycloak/login", payload);
+      // 2. response 로 로그인되었는지 확인.
+      console.log(res);
+      let data = res.data;
+      this.$refs.events.innerHTML = data;
     },
   },
 };

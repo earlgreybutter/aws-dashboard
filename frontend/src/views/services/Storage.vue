@@ -36,9 +36,9 @@ export default {
         { text: "CreationDate", datafield: "CreationDate", editable: false, width: 240 },
         {
           text: "Comment",
-          datafield: 'InputValue.Comment',
-          columntype: "textbox",
-          editable: true,
+          datafield: ['InputValue']['Comment'],
+          //columntype: "textbox",
+          editable: false,
           width: "20%"
         },
         {
@@ -80,7 +80,7 @@ export default {
       datafields: [
         { name: "Name", type: "string" },
         { name: "CreationDate", type: "string" },
-        { name: "InputValue.Comment", type: "string" },
+        { name: ['InputValue']['Comment'], type: "string" },
         { name: "InputValue.CheckDate", type: "string" }
       ]
     };
